@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.ycagd.mp",
+      "sha256_cert_fingerprints": [
+        "D2:CB:C6:F7:64:20:43:84:04:F2:3D:92:27:D5:BC:55:C5:7B:FC:FD:8C:6C:CC:D4:31:5F:F5:A9:0D:E4:88:51"
+      ]
+    }
+  }
+]
