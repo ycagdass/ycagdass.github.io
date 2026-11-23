@@ -490,6 +490,7 @@
         <div class="nav-tabs">
           <button id="navPostings" class="nav-tab active" type="button">İlanlar</button>
           <button id="navNitelik" class="nav-tab" type="button">Nitelik Kodları</button>
+          <button id="navAbout" class="nav-tab" type="button">Hakkında</button>
         </div>
         <button id="themeBtn" class="btn btn-icon" type="button" title="Tema Değiştir">☀️</button>
       </div>
@@ -584,6 +585,45 @@
         </div>
       </section>
       <section id="nitelikArea" class="nitelik-grid"></section>
+    </div>
+
+    <!-- Hakkında Görünümü -->
+    <div id="viewAbout" class="hidden">
+      <section class="hero" style="grid-template-columns:1fr;margin-bottom:16px">
+        <div>
+          <div class="hero-eyebrow"><span class="dot"></span><span>Sürüm 1.0.0 • Geliştirici: ycagdass</span></div>
+          <h1>Memur Pusula Hakkında</h1>
+          <p style="margin-bottom:0">
+            Memur Pusula, Türkiye'deki resmî kamu personel alımlarını tek ekranda toplar; KPSS puan türüne (P94, P93, P3) ve taban puana göre hızlıca filtrelemeni sağlar.
+          </p>
+        </div>
+      </section>
+      <section class="grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+        <article class="card">
+          <div class="card-top"><span class="tag tag-accent">Kaynaklar</span></div>
+          <h2 class="card-title">Resmî Veri Kaynakları</h2>
+          <p style="font-size:13.5px;color:var(--muted);line-height:1.65">
+            • SBB Kamu İlan Portalı (kamuilan.sbb.gov.tr)<br />
+            • CBİKO Kariyer Kapısı (kariyerkapisi.gov.tr)<br />
+            • T.C. Resmî Gazete Çeşitli İlanlar (resmigazete.gov.tr)<br />
+            • ÖSYM KPSS Duyuruları &amp; 468 Nitelik Kodu (osym.gov.tr)
+          </p>
+        </article>
+        <article class="card">
+          <div class="card-top"><span class="tag tag-accent">Gizlilik</span></div>
+          <h2 class="card-title">Puan ve Tercih Gizliliği</h2>
+          <p style="font-size:13.5px;color:var(--muted);line-height:1.65">
+            Seçtiğin KPSS puan türü ve puan bilgisi yalnızca kendi tarayıcında saklanır. Üyelik veya giriş gerektirmez; reklamsız ve sade bir takip deneyimi sunar.
+          </p>
+        </article>
+        <article class="card">
+          <div class="card-top"><span class="tag tag-warn">Bilgilendirme</span></div>
+          <h2 class="card-title">Sorumluluk Reddi</h2>
+          <p style="font-size:13.5px;color:var(--muted);line-height:1.65">
+            Memur Pusula hiçbir resmî devlet kurumuyla (ÖSYM, SBB, CBİKO vb.) bağlantılı değildir; bağımsız bir bilgi takip aracıdır. Başvuru şartları ve son tarihler için her zaman ilgili kurumun resmî duyurusu esas alınmalıdır.
+          </p>
+        </article>
+      </section>
     </div>
 
     <footer class="footer">
@@ -803,16 +843,18 @@
     }
 
     function switchMainView(view) {
-      const isNitelik = view === 'nitelik';
-      $('viewPostings').classList.toggle('hidden', isNitelik);
-      $('viewNitelik').classList.toggle('hidden', !isNitelik);
-      $('navPostings').classList.toggle('active', !isNitelik);
-      $('navNitelik').classList.toggle('active', isNitelik);
-      if (isNitelik) loadNitelikCatalog();
+      $('viewPostings').classList.toggle('hidden', view !== 'postings');
+      $('viewNitelik').classList.toggle('hidden', view !== 'nitelik');
+      $('viewAbout').classList.toggle('hidden', view !== 'about');
+      $('navPostings').classList.toggle('active', view === 'postings');
+      $('navNitelik').classList.toggle('active', view === 'nitelik');
+      $('navAbout').classList.toggle('active', view === 'about');
+      if (view === 'nitelik') loadNitelikCatalog();
     }
 
     $('navPostings').onclick = () => switchMainView('postings');
     $('navNitelik').onclick = () => switchMainView('nitelik');
+    $('navAbout').onclick = () => switchMainView('about');
     $('goNitelikBtn').onclick = () => switchMainView('nitelik');
     $('nitelikSearch').oninput = (e) => { nitelikState.query = e.target.value; renderNitelik(); };
     document.querySelectorAll('#nitelikLevelPills .pill').forEach(el => {
