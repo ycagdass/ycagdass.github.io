@@ -372,6 +372,68 @@
       border: 1px dashed var(--border);
       border-radius: 16px;
     }
+    .nav-tabs {
+      display: inline-flex;
+      gap: 6px;
+      background: var(--surface-soft);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    .nav-tab {
+      padding: 7px 14px;
+      border-radius: 9px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .nav-tab.active {
+      background: var(--accent);
+      color: #FFFFFF;
+    }
+    .nitelik-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .nitelik-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 13px 15px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: border-color 0.15s ease;
+    }
+    .nitelik-card:hover { border-color: var(--accent); }
+    .nitelik-code {
+      font-weight: 800;
+      font-size: 14px;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 6px 10px;
+      border-radius: 9px;
+      min-width: 62px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .nitelik-area {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .nitelik-lvl {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .hidden { display: none !important; }
     .footer {
       margin-top: 32px;
       text-align: center;
@@ -390,8 +452,9 @@
       .brand-title { font-size: 18px; }
       .container { padding: 14px 12px 36px; }
       .hero { padding: 18px 16px; border-radius: 16px; }
-      .grid { grid-template-columns: 1fr; }
+      .grid, .nitelik-grid { grid-template-columns: 1fr; }
       .hide-sm { display: none; }
+      .nav-tab { padding: 6px 10px; font-size: 12px; }
     }
   </style>
 </head>
@@ -403,29 +466,28 @@
         <span class="brand-title">Memur Pusula</span>
       </a>
       <div class="top-actions">
-        <button id="themeBtn" class="btn btn-icon" title="Tema Değiştir">☀️</button>
-        <a id="openAppTop" class="btn btn-primary" href="intent://open#Intent;scheme=memurpusula;package=com.ycagd.mp;S.browser_fallback_url=https%3A%2F%2Fycagdass.github.io%2Fmemurpusula;end">
-          Uygulamada Aç
-        </a>
+        <div class="nav-tabs">
+          <button id="navPostings" class="nav-tab active" type="button">İlanlar</button>
+          <button id="navNitelik" class="nav-tab" type="button">Nitelik Kodları</button>
+        </div>
+        <button id="themeBtn" class="btn btn-icon" type="button" title="Tema Değiştir">☀️</button>
       </div>
     </div>
   </header>
 
   <main class="container">
+    <div id="viewPostings">
     <section class="hero">
       <div>
         <div class="hero-eyebrow"><span class="dot"></span><span id="liveStatus">Canlı sunucuya bağlanıyor…</span></div>
         <h1>Doğru kamu ilanını kaçırmadan, tek ekrandan takip et.</h1>
         <p>
           SBB Kamu İlan, Kariyer Kapısı, Resmî Gazete ve ÖSYM duyuruları anlık olarak tek yerde.
-          Puan türünü ve puanını seçip sana uyan kadroları hemen inceleyebilirsin.
-          <strong>AI PDF analizi, alarm ve bildirimler</strong> için Android uygulamasını kullanabilirsin.
+          Puan türünü ve puanını seçip sana uyan güncel kadroları hemen inceleyebilirsin.
         </p>
         <div class="hero-cta">
-          <a class="btn btn-primary" href="intent://open#Intent;scheme=memurpusula;package=com.ycagd.mp;S.browser_fallback_url=https%3A%2F%2Fycagdass.github.io%2Fmemurpusula;end">
-            📱 Memur Pusula Uygulamasını Aç
-          </a>
-          <button id="refreshBtn" class="btn">🔄 İlanları Yenile</button>
+          <button id="refreshBtn" class="btn btn-primary" type="button">🔄 İlanları Yenile</button>
+          <button id="goNitelikBtn" class="btn" type="button">📚 ÖSYM Nitelik Kodları (468)</button>
         </div>
       </div>
 
@@ -477,6 +539,31 @@
     </section>
 
     <section id="listArea" class="grid"></section>
+    </div>
+
+    <!-- ÖSYM 468 Nitelik Kodları Görünümü -->
+    <div id="viewNitelik" class="hidden">
+      <section class="hero" style="grid-template-columns:1fr;margin-bottom:16px">
+        <div>
+          <div class="hero-eyebrow"><span class="dot"></span><span id="nitelikCountLabel">468 Resmî ÖSYM Nitelik Kodu</span></div>
+          <h1>ÖSYM KPSS Nitelik Kodları Rehberi</h1>
+          <p style="margin-bottom:0">Kod numarası veya bölüm adına göre anında ara. Herhangi bir koda tıklayarak panoya kopyalayabilirsin.</p>
+        </div>
+      </section>
+      <section class="toolbar">
+        <div class="search-wrap">
+          <input id="nitelikSearch" type="search" placeholder="Kod veya bölüm ara (örn: 2001, bilgisayar, adalet, sağlık, 3001)..." />
+        </div>
+        <div class="pills" id="nitelikLevelPills">
+          <button class="pill active" type="button" data-lvl="ALL">Tümü</button>
+          <button class="pill" type="button" data-lvl="P94">P94 Lise</button>
+          <button class="pill" type="button" data-lvl="P93">P93 Ön Lisans</button>
+          <button class="pill" type="button" data-lvl="P3">P3 Lisans</button>
+          <button class="pill" type="button" data-lvl="ORTAK">Ortak</button>
+        </div>
+      </section>
+      <section id="nitelikArea" class="nitelik-grid"></section>
+    </div>
 
     <footer class="footer">
       <strong>Memur Pusula</strong> • Geliştirici: ycagdass • Salt-okunur canlı web önizleme (API anahtarı içermez).<br />
@@ -643,10 +730,87 @@
         $('liveStatus').textContent = `Canlı • ${state.raw.length} güncel kamu ilanı`;
         render();
       } catch (e) {
-        $('liveStatus').textContent = 'Sunucu şu an çevrimdışı (Android uygulamadan sunucusuz erişebilirsin)';
-        $('listArea').innerHTML = `<div class="empty" style="grid-column:1/-1">Canlı sunucuya şu an ulaşılamıyor. Biraz sonra "İlanları Yenile" butonuna basabilir veya <strong>Memur Pusula Android</strong> uygulamasını kullanabilirsin.</div>`;
+        $('liveStatus').textContent = 'Sunucu şu an çevrimdışı — biraz sonra tekrar deneyebilirsin';
+        $('listArea').innerHTML = `<div class="empty" style="grid-column:1/-1">Canlı sunucuya şu an ulaşılamıyor. Biraz sonra "İlanları Yenile" butonuna basabilirsin.</div>`;
       }
     }
+
+    // --- ÖSYM 468 Nitelik Kodları ---
+    const nitelikState = { items: [], level: 'ALL', query: '', loaded: false };
+
+    function renderNitelik() {
+      const q = trLow(nitelikState.query.trim());
+      const rows = nitelikState.items.filter(k => {
+        if (nitelikState.level !== 'ALL' && k.level !== nitelikState.level) return false;
+        if (q && !String(k.code).includes(q) && !trLow(k.area).includes(q)) return false;
+        return true;
+      });
+      $('nitelikCountLabel').textContent = `${rows.length} / ${nitelikState.items.length} Resmî ÖSYM Nitelik Kodu`;
+      const area = $('nitelikArea');
+      if (!rows.length) {
+        area.innerHTML = `<div class="empty" style="grid-column:1/-1">Aramana uyan nitelik kodu bulunamadı.</div>`;
+        return;
+      }
+      area.innerHTML = rows.slice(0, 250).map(k => `
+        <div class="nitelik-card" data-copy="${esc(k.code)}" title="Kodu kopyalamak için tıkla">
+          <div class="nitelik-code">${esc(k.code)}</div>
+          <div>
+            <div class="nitelik-area">${esc(k.area)}</div>
+            <div class="nitelik-lvl">${esc(k.level)}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function loadNitelikCatalog() {
+      if (nitelikState.loaded) { renderNitelik(); return; }
+      $('nitelikArea').innerHTML = `<div class="empty" style="grid-column:1/-1">Nitelik kodları yükleniyor…</div>`;
+      try {
+        let res = await fetch('./osym_catalog.json');
+        if (!res.ok) res = await fetch(`${API_BASE}/api/catalog`);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        nitelikState.items = Array.isArray(data.nitelik_kodlari) ? data.nitelik_kodlari : [];
+        nitelikState.loaded = true;
+        renderNitelik();
+      } catch {
+        $('nitelikArea').innerHTML = `<div class="empty" style="grid-column:1/-1">Nitelik kodları yüklenemedi. Sayfayı yenileyip tekrar dene.</div>`;
+      }
+    }
+
+    function switchMainView(view) {
+      const isNitelik = view === 'nitelik';
+      $('viewPostings').classList.toggle('hidden', isNitelik);
+      $('viewNitelik').classList.toggle('hidden', !isNitelik);
+      $('navPostings').classList.toggle('active', !isNitelik);
+      $('navNitelik').classList.toggle('active', isNitelik);
+      if (isNitelik) loadNitelikCatalog();
+    }
+
+    $('navPostings').onclick = () => switchMainView('postings');
+    $('navNitelik').onclick = () => switchMainView('nitelik');
+    $('goNitelikBtn').onclick = () => switchMainView('nitelik');
+    $('nitelikSearch').oninput = (e) => { nitelikState.query = e.target.value; renderNitelik(); };
+    document.querySelectorAll('#nitelikLevelPills .pill').forEach(el => {
+      el.onclick = () => {
+        document.querySelectorAll('#nitelikLevelPills .pill').forEach(p => p.classList.remove('active'));
+        el.classList.add('active');
+        nitelikState.level = el.dataset.lvl;
+        renderNitelik();
+      };
+    });
+    $('nitelikArea').addEventListener('click', (e) => {
+      const card = e.target.closest('.nitelik-card');
+      if (!card) return;
+      const code = card.dataset.copy;
+      try { navigator.clipboard?.writeText(code); } catch {}
+      const badge = card.querySelector('.nitelik-code');
+      if (badge) {
+        const old = badge.textContent;
+        badge.textContent = '✓ ' + code;
+        setTimeout(() => { badge.textContent = old; }, 1000);
+      }
+    });
 
     $('scoreType').onchange = (e) => {
       state.scoreType = e.target.value;
